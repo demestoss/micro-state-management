@@ -4,7 +4,7 @@ import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
 import createContext from "zustand/context";
 import { uniq } from "../utils/uniq";
-import { cls } from "../utils/cls";
+import { clsx } from "clsx";
 import { useRenderCount } from "../hooks/use-render-count";
 
 interface Todo {
@@ -67,11 +67,11 @@ const TodoItem: FC<{ id: string; title: string; done: boolean }> = ({ id, done, 
   const toggle = useTodoStore(selectToggleTodo);
 
   return (
-    <div className={cls("flex justify-between rounded-md p-3 ", done ? "shadow-md" : "shadow-lg")}>
+    <div className={clsx("flex justify-between rounded-md p-3 ", done ? "shadow-md" : "shadow-lg")}>
       <div className="flex space-x-4">
         <input type="checkbox" checked={done} onChange={() => toggle(id)} />
 
-        <div className={cls("font-semibold", done && "line-through font-medium")}>{title}</div>
+        <div className={clsx("font-semibold", done && "line-through font-medium")}>{title}</div>
       </div>
 
       <button className="text-red-400 hover:text-red-500" onClick={() => remove(id)}>

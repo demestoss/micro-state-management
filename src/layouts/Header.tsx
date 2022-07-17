@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Link, LinkProps, useRoute } from "wouter";
-import { cls } from "../utils/cls";
+import { clsx } from "clsx";
 
 const Header: FC = () => {
   return (
@@ -19,9 +19,11 @@ const ActiveLink: FC<LinkProps> = (props) => {
   return (
     <Link {...props}>
       <a
-        className={cls(
-          "text-xl hover:text-neutral-600 bg ",
-          active ? "text-neutral-800 font-bold" : "text-neutral-500 font-semibold "
+        className={clsx(
+          "text-xl",
+          active
+            ? "text-neutral-800 font-bold"
+            : "text-neutral-500 font-semibold hover:text-neutral-600"
         )}
       >
         {children}
