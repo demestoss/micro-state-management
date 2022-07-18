@@ -1,5 +1,5 @@
 import { Redirect, Route, Switch } from "wouter";
-import { ZustandTodo } from "./pages/zustand-todo";
+import { ZustandApp } from "./pages/zustand-app";
 import { PageContainer } from "./layouts/PageContainer";
 import { SubscriptionStore } from "./pages/subscription-store";
 
@@ -8,7 +8,7 @@ const App = () => {
     <PageContainer>
       <Switch>
         <Route path="/zustand">
-          <ZustandTodo />
+          <ZustandApp />
         </Route>
 
         <Route path="/subscribed">

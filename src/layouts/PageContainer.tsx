@@ -6,7 +6,7 @@ const PageContainer: FC<{ children: ReactNode }> = ({ children }) => {
     <div className="flex flex-col">
       <Header />
 
-      <div className="mx-auto w-6/12 mt-5">{children}</div>
+      <div className="mx-auto w-7/12 mt-5">{children}</div>
     </div>
   );
 };

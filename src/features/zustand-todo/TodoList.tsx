@@ -1,11 +1,12 @@
-import React, { FC, memo, useCallback, useEffect, useRef, useState } from "react";
 import create, { StoreApi } from "zustand";
-import { immer } from "zustand/middleware/immer";
 import { persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+import { uniq } from "../../utils/uniq";
 import createContext from "zustand/context";
-import { uniq } from "../utils/uniq";
+import React, { FC, memo, useCallback, useId, useRef, useState } from "react";
 import { clsx } from "clsx";
-import { useRenderCount } from "../hooks/use-render-count";
+import { useRenderCount } from "../../hooks/use-render-count";
+import { SharedTextDisplay } from "./SharedText";
 
 interface Todo {
   id: string;
@@ -20,7 +21,7 @@ interface StoreState {
   toggleTodo: (id: string) => void;
 }
 
-const createStore = () =>
+const createTodoStore = (id: string) =>
   create<StoreState, [["zustand/persist", StoreState], ["zustand/immer", never]]>(
     persist(
       immer((set) => ({
@@ -35,25 +36,17 @@ const createStore = () =>
           })),
         toggleTodo: (id) =>
           set((state) => {
-            state.todos = state.todos.map((todo) => {
-              if (todo.id === id) {
-                todo.done = !todo.done;
-              }
-              return todo;
-            });
+            const todo = state.todos.find((todo) => todo.id === id)!;
+            todo.done = !todo.done;
           }),
       })),
       {
-        name: "todo-list",
+        name: `todo-list-${id}`,
         getStorage: () => localStorage,
       }
     )
   );
 
-// App global store
-const useStore = createStore();
-
-// Injected global store
 const { Provider: TodoProvider, useStore: useTodoStore } = createContext<StoreApi<StoreState>>();
 
 const selectTodos = (state: StoreState) => state.todos;
@@ -61,6 +54,30 @@ const selectTodosLength = (state: StoreState) => state.todos.length;
 const selectAddTodo = (state: StoreState) => state.addTodo;
 const selectRemoveTodo = (state: StoreState) => state.removeTodo;
 const selectToggleTodo = (state: StoreState) => state.toggleTodo;
+
+const TodoList: FC<{ id: string }> = ({ id }) => {
+  return (
+    <TodoProvider createStore={() => createTodoStore(id)}>
+      <div className="flex flex-col space-y-6">
+        <TodoListView />
+        <TodoListLength />
+        <NewTodo />
+        <SharedTextDisplay />
+      </div>
+    </TodoProvider>
+  );
+};
+
+const TodoListView = () => {
+  const todos = useTodoStore(selectTodos);
+  return (
+    <div className="flex-1 space-y-4">
+      {todos.map((todo) => (
+        <MemoedTodoItem key={todo.id} {...todo} />
+      ))}
+    </div>
+  );
+};
 
 const TodoItem: FC<{ id: string; title: string; done: boolean }> = ({ id, done, title }) => {
   const remove = useTodoStore(selectRemoveTodo);
@@ -85,19 +102,7 @@ const MemoedTodoItem = memo(TodoItem);
 
 const TodoListLength = () => {
   const length = useTodoStore(selectTodosLength);
-
   return <div>Length is: {length}</div>;
-};
-
-const TodoList = () => {
-  const todos = useTodoStore(selectTodos);
-  return (
-    <div className="space-y-4">
-      {todos.map((todo) => (
-        <MemoedTodoItem key={todo.id} {...todo} />
-      ))}
-    </div>
-  );
 };
 
 const NewTodo = () => {
@@ -133,17 +138,4 @@ const NewTodo = () => {
   );
 };
 
-const ZustandTodo: FC = () => {
-  return (
-    <div className="flex flex-col space-y-8 w-9/12 p-5 mx-auto">
-      <div className="text-xl">Zustand To-do</div>
-      <TodoProvider createStore={createStore}>
-        <TodoList />
-        <TodoListLength />
-        <NewTodo />
-      </TodoProvider>
-    </div>
-  );
-};
-
-export { ZustandTodo };
+export { TodoList };

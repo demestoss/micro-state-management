@@ -62,8 +62,6 @@ function create<T>(initialState: T) {
     useStore(store, selector);
 }
 
-export type Mutate<T> = (state: NextState<T>) => void;
-
 function createStoreContext<T>(defaultValue?: T) {
   const StoreContext = createContext<Store<T> | undefined>(
     defaultValue && createStore(defaultValue)
@@ -91,16 +89,18 @@ function createStoreContext<T>(defaultValue?: T) {
     return useStore(store, selector);
   }
 
-  function useStoreMutation<S = T>(mutator: (mutate: Mutate<T>) => void) {
+  function useStoreMutation<S = T>(mutator: NextState<T>) {
     const store = useStoreContext();
 
-    const mutatorRef = useRef<(mutate: Mutate<T>) => void>(mutator);
+    const mutatorRef = useRef<NextState<T>>(mutator);
 
     useEffect(() => {
       mutatorRef.current = mutator;
     }, [mutator]);
 
-    return useCallback(() => mutatorRef.current(store.set), [store]);
+    return useCallback(() => {
+      store.set(mutatorRef.current);
+    }, [store]);
   }
 
   return [Provider, useStoreSelector, useStoreMutation] as const;

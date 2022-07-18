@@ -9,8 +9,8 @@ const [Provider, useSelector, useMutation] = createStoreContext<Store>();
 
 const Component1 = () => {
   const count = useSelector((s) => s.count);
-  const increment = useMutation((m) => m((prev) => ({ ...prev, count: prev.count + 1 })));
-  const reset = useMutation((m) => m((prev) => ({ ...prev, count: 0 })));
+  const increment = useMutation((prev) => ({ ...prev, count: prev.count + 1 }));
+  const reset = useMutation((prev) => ({ ...prev, count: 0 }));
 
   return (
     <div className="flex flex-col space-y-4">
