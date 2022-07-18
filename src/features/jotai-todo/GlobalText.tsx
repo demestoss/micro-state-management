@@ -8,7 +8,7 @@ const GlobalTextInput = () => {
 
   return (
     <div className="flex flex-col space-y-4">
-      <div className="text-xl text-center">Shared Text</div>
+      <div className="text-xl text-center">Global Text (Does not work with Jotai right now :\)</div>
       <input
         className="border-2 border-gray-300 rounded-md p-1 w-full"
         type="text"
