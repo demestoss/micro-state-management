@@ -8,9 +8,12 @@ import { clsx } from "clsx";
 import { useRenderCount } from "../hooks/use-render-count";
 import { TodoList } from "../features/zustand-todo/TodoList";
 import { SharedTextInput } from "../features/zustand-todo/SharedText";
+import { atom, useAtomValue } from "jotai";
+
+const todoIdListAtom = atom(() => ["first", "second"]);
 
 const ZustandApp: FC = () => {
-  const [todoIdList] = useState(() => ["first", "second"]);
+  const todoIdList = useAtomValue(todoIdListAtom);
 
   return (
     <div className="flex flex-col space-y-10 mx-auto">

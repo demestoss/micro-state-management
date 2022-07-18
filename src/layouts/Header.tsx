@@ -7,6 +7,8 @@ const Header: FC = () => {
     <header className="flex p-8 space-x-8 ">
       <ActiveLink href="/zustand">Zustand To-Do</ActiveLink>
 
+      <ActiveLink href="/jotai">Jotai To-Do</ActiveLink>
+
       <ActiveLink href="/subscribed">My Subscribed library</ActiveLink>
     </header>
   );

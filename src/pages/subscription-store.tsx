@@ -1,4 +1,4 @@
-import { createStoreContext } from "../lib/subscribed";
+import { createStoreContext } from "../utils/subscribed";
 
 interface Store {
   count: number;

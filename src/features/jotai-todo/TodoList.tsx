@@ -1,32 +1,26 @@
 import React, { FC, memo, useCallback, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { useRenderCount } from "../../hooks/use-render-count";
-import {
-  selectAddTodo,
-  selectRemoveTodo,
-  selectTodos,
-  selectTodosLength,
-  selectToggleTodo,
-  TodoProvider,
-  useTodoStore,
-} from "./todo-store";
-import { SharedTextDisplay } from "./SharedText";
+import { GlobalTextDisplay } from "./GlobalText";
+import { Provider, useAtom, useAtomValue } from "jotai";
+import { TodosActions, todosAtom, todosAtomLength } from "./todo-atoms";
+import { useUpdateAtom } from "jotai/utils";
 
-const TodoList: FC<{ id: string }> = ({ id }) => {
+const TodoList: FC<{ id?: string }> = ({ id }) => {
   return (
-    <TodoProvider id={id}>
+    <Provider>
       <div className="flex flex-col space-y-6">
         <TodoListView />
         <TodoListLength />
         <NewTodo />
-        <SharedTextDisplay />
+        <GlobalTextDisplay />
       </div>
-    </TodoProvider>
+    </Provider>
   );
 };
 
 const TodoListView = () => {
-  const todos = useTodoStore(selectTodos);
+  const [todos] = useAtom(todosAtom);
 
   return (
     <div className="flex-1 space-y-4">
@@ -38,8 +32,8 @@ const TodoListView = () => {
 };
 
 const TodoItem: FC<{ id: string; title: string; done: boolean }> = ({ id, done, title }) => {
-  const remove = useTodoStore(selectRemoveTodo);
-  const toggle = useTodoStore(selectToggleTodo);
+  const remove = useUpdateAtom(TodosActions.removeTodo);
+  const toggle = useUpdateAtom(TodosActions.toggleTodo);
 
   return (
     <div className={clsx("flex justify-between rounded-md p-3 ", done ? "shadow-md" : "shadow-lg")}>
@@ -59,12 +53,12 @@ const TodoItem: FC<{ id: string; title: string; done: boolean }> = ({ id, done, 
 const MemoedTodoItem = memo(TodoItem);
 
 const TodoListLength = () => {
-  const length = useTodoStore(selectTodosLength);
+  const length = useAtomValue(todosAtomLength);
   return <div>Length is: {length}</div>;
 };
 
 const NewTodo = () => {
-  const addTodo = useTodoStore(selectAddTodo);
+  const addTodo = useUpdateAtom(TodosActions.addTodo);
   const [text, setText] = useState("");
 
   const textRef = useRef(text);
