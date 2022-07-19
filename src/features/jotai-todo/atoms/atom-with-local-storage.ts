@@ -1,6 +1,9 @@
-import { atom, WritableAtom } from "jotai";
+import { atom, SetStateAction, WritableAtom } from "jotai";
+import { RESET } from "jotai/utils";
 
-function atomWithLocalStorage<T>(initialValue: T, key: string) {
+type Schema = { safeParse: (s: string) => { success: boolean } };
+
+function atomWithLocalStorage<T>(initialValue: T, key: string, schema?: Schema) {
   const localData = window.localStorage.getItem(key);
   let parsedData;
   try {
@@ -9,26 +12,26 @@ function atomWithLocalStorage<T>(initialValue: T, key: string) {
     parsedData = undefined;
   }
 
-  const initial = (parsedData && getAtomizedValue(parsedData)) || initialValue;
+  const isValid = schema ? schema.safeParse(parsedData).success : true;
 
-  const anAtom = atom(initial, (get, set, nextValue: T | ((p: T) => T)) => {
-    set(anAtom, nextValue);
-    window.localStorage.setItem(key, JSON.stringify(get(anAtom)));
-  });
+  const initial: T = (isValid && parsedData) || initialValue;
 
-  return anAtom as WritableAtom<T, T | ((p: T) => T)>;
-}
+  const baseAtom = atom(initial);
 
-// Works only for basic atoms I guess (now totally unused due to storage persistent restrictions)
-function getAtomizedValue(value: any): any {
-  if (typeof value !== "object") {
-    return value;
-  }
-  if (Array.isArray(value)) {
-    return value.map((el) => getAtomizedValue(el));
-  }
+  const anAtom = atom(
+    (get) => get(baseAtom),
+    (get, set, update: SetStateAction<T> | typeof RESET) => {
+      if (update === RESET) {
+        set(baseAtom, initialValue);
+        return window.localStorage.removeItem(key);
+      }
 
-  return value.init ? atom(value.init) : value;
+      set(baseAtom, update);
+      window.localStorage.setItem(key, JSON.stringify(get(anAtom)));
+    }
+  );
+
+  return anAtom as WritableAtom<T, SetStateAction<T> | typeof RESET>;
 }
 
 export { atomWithLocalStorage };

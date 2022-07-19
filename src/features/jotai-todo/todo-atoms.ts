@@ -1,8 +1,9 @@
-import { atom } from "jotai";
-import { atomFamily, useUpdateAtom } from "jotai/utils";
+import { atom, SetStateAction } from "jotai";
+import { atomFamily, RESET, useUpdateAtom } from "jotai/utils";
 import { useCallback } from "react";
 import { atomWithLocalStorage } from "./atoms/atom-with-local-storage";
 import { uniq } from "../../utils/uniq";
+import { z } from "zod";
 
 export type Todo = {
   id: string;
@@ -10,19 +11,24 @@ export type Todo = {
   done: boolean;
 };
 
+const TodoListSchema = z.array(
+  z.object({
+    id: z.string(),
+    title: z.string(),
+    done: z.boolean(),
+  })
+);
+
 const todosIdAtom = atom("todos-list");
 
-const todosFamilyAtom = atomFamily((id: string) => atomWithLocalStorage<Todo[]>([], id));
+const todosFamilyAtom = atomFamily((id: string) =>
+  atomWithLocalStorage<Todo[]>([], id, TodoListSchema)
+);
 
 const todosAtom = atom(
   (get) => get(todosFamilyAtom(get(todosIdAtom))),
-  (get, set, nextValue: Todo[] | ((p: Todo[]) => Todo[])) => {
-    const val =
-      typeof nextValue === "function"
-        ? nextValue(get(todosFamilyAtom(get(todosIdAtom))))
-        : nextValue;
-    set(todosFamilyAtom(get(todosIdAtom)), val);
-  }
+  (get, set, update: SetStateAction<Todo[]> | typeof RESET) =>
+    set(todosFamilyAtom(get(todosIdAtom)), update)
 );
 
 const todosLengthAtom = atom((get) => get(todosAtom).length);
