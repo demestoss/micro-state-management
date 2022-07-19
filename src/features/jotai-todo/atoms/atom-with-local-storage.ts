@@ -19,7 +19,7 @@ function atomWithLocalStorage<T>(initialValue: T, key: string) {
   return anAtom as WritableAtom<T, T | ((p: T) => T)>;
 }
 
-// Works only for basic atoms I guess
+// Works only for basic atoms I guess (now totally unused due to storage persistent restrictions)
 function getAtomizedValue(value: any): any {
   if (typeof value !== "object") {
     return value;

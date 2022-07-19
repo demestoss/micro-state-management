@@ -2,15 +2,15 @@ import React, { FC, memo, useCallback, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { useRenderCount } from "../../hooks/use-render-count";
 import { GlobalTextDisplay } from "./GlobalText";
-import { atom, Provider, useAtomValue } from "jotai";
+import { Provider, useAtomValue } from "jotai";
 import {
   addTodoAtom,
-  TodoAtom,
   todosAtom,
-  todosAtomLength,
+  todosLengthAtom,
   todosIdAtom,
-  useRemoveTodo,
   useToggleTodo,
+  useRemoveTodo,
+  Todo,
 } from "./todo-atoms";
 import { useUpdateAtom } from "jotai/utils";
 
@@ -33,16 +33,16 @@ const TodoListView = () => {
   return (
     <div className="flex-1 space-y-4">
       {todos.map((todo) => (
-        <MemoedTodoItem key={todo.toString()} todo={todo} />
+        <MemoedTodoItem key={todo.id} todo={todo} />
       ))}
     </div>
   );
 };
 
-const TodoItem: FC<{ todo: TodoAtom }> = ({ todo }) => {
-  const { done, title } = useAtomValue(todo);
-  const toggle = useToggleTodo(todo);
-  const remove = useRemoveTodo(todo);
+const TodoItem: FC<{ todo: Todo }> = ({ todo }) => {
+  const { done, title, id } = todo;
+  const toggle = useToggleTodo(id);
+  const remove = useRemoveTodo(id);
 
   return (
     <div className={clsx("flex justify-between rounded-md p-3 ", done ? "shadow-md" : "shadow-lg")}>
@@ -62,7 +62,7 @@ const TodoItem: FC<{ todo: TodoAtom }> = ({ todo }) => {
 const MemoedTodoItem = memo(TodoItem);
 
 const TodoListLength = () => {
-  const length = useAtomValue(todosAtomLength);
+  const length = useAtomValue(todosLengthAtom);
   return <div>Length is: {length}</div>;
 };
 

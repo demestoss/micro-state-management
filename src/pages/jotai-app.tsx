@@ -12,10 +12,6 @@ const JotaiApp = () => {
   return (
     <Provider scope="global">
       <div className="flex flex-col space-y-10 mx-auto">
-        <div className="text-center text-red-300">
-          localStorage persist for toggle case still does not work :(
-        </div>
-
         <GlobalTextInput />
 
         <div className="grid grid-cols-2 gap-8">
