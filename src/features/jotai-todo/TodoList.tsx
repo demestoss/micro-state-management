@@ -3,12 +3,19 @@ import { clsx } from "clsx";
 import { useRenderCount } from "../../hooks/use-render-count";
 import { GlobalTextDisplay } from "./GlobalText";
 import { Provider, useAtom, useAtomValue } from "jotai";
-import { TodosActions, todosAtom, todosAtomLength } from "./todo-atoms";
+import {
+  addTodoAtom,
+  TodoAtom,
+  todosAtom,
+  todosAtomLength,
+  useRemoveTodo,
+  useToggleTodo,
+} from "./todo-atoms";
 import { useUpdateAtom } from "jotai/utils";
 
-const TodoList: FC<{ id?: string }> = ({ id }) => {
+const TodoList: FC<{ id: string }> = ({ id }) => {
   return (
-    <Provider>
+    <Provider initialValues={[[todosAtom, []]]}>
       <div className="flex flex-col space-y-6">
         <TodoListView />
         <TodoListLength />
@@ -20,30 +27,31 @@ const TodoList: FC<{ id?: string }> = ({ id }) => {
 };
 
 const TodoListView = () => {
-  const [todos] = useAtom(todosAtom);
+  const todos = useAtomValue(todosAtom);
 
   return (
     <div className="flex-1 space-y-4">
       {todos.map((todo) => (
-        <MemoedTodoItem key={todo.id} {...todo} />
+        <MemoedTodoItem key={todo.toString()} todo={todo} />
       ))}
     </div>
   );
 };
 
-const TodoItem: FC<{ id: string; title: string; done: boolean }> = ({ id, done, title }) => {
-  const remove = useUpdateAtom(TodosActions.removeTodo);
-  const toggle = useUpdateAtom(TodosActions.toggleTodo);
+const TodoItem: FC<{ todo: TodoAtom }> = ({ todo }) => {
+  const { done, title } = useAtomValue(todo);
+  const toggle = useToggleTodo(todo);
+  const remove = useRemoveTodo(todo);
 
   return (
     <div className={clsx("flex justify-between rounded-md p-3 ", done ? "shadow-md" : "shadow-lg")}>
       <div className="flex space-x-4">
-        <input type="checkbox" checked={done} onChange={() => toggle(id)} />
+        <input type="checkbox" checked={done} onChange={toggle} />
 
         <div className={clsx("font-semibold", done && "line-through font-medium")}>{title}</div>
       </div>
 
-      <button className="text-red-400 hover:text-red-500" onClick={() => remove(id)}>
+      <button className="text-red-400 hover:text-red-500" onClick={remove}>
         Delete
       </button>
     </div>
@@ -58,7 +66,7 @@ const TodoListLength = () => {
 };
 
 const NewTodo = () => {
-  const addTodo = useUpdateAtom(TodosActions.addTodo);
+  const addTodo = useUpdateAtom(addTodoAtom);
   const [text, setText] = useState("");
 
   const textRef = useRef(text);
