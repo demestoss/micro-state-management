@@ -1,10 +1,11 @@
-import { atomWithReset } from "jotai/utils";
-import { useGlobalAtom, useGlobalAtomValue, useGlobalResetAtom } from "../../pages/jotai-app";
+import { atomWithReset, useResetAtom } from "jotai/utils";
+import { globalAtomScope } from "../../pages/jotai-app";
+import { useAtom, useAtomValue } from "jotai";
 
 const textAtom = atomWithReset("");
 
 const GlobalTextInput = () => {
-  const [text, setText] = useGlobalAtom(textAtom);
+  const [text, setText] = useAtom(textAtom, globalAtomScope);
 
   return (
     <div className="flex flex-col space-y-4">
@@ -20,8 +21,8 @@ const GlobalTextInput = () => {
 };
 
 const GlobalTextDisplay = () => {
-  const text = useGlobalAtomValue(textAtom);
-  const reset = useGlobalResetAtom(textAtom);
+  const text = useAtomValue(textAtom, globalAtomScope);
+  const reset = useResetAtom(textAtom, globalAtomScope);
 
   if (!text) return null;
 

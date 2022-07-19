@@ -1,11 +1,4 @@
-import React, { FC, memo, useCallback, useEffect, useRef, useState } from "react";
-import create, { StoreApi } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { persist } from "zustand/middleware";
-import createContext from "zustand/context";
-import { uniq } from "../utils/uniq";
-import { clsx } from "clsx";
-import { useRenderCount } from "../hooks/use-render-count";
+import React, { FC } from "react";
 import { TodoList } from "../features/zustand-todo/TodoList";
 import { SharedTextInput } from "../features/zustand-todo/SharedText";
 import { atom, useAtomValue } from "jotai";
