@@ -2,12 +2,13 @@ import React, { FC, memo, useCallback, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { useRenderCount } from "../../hooks/use-render-count";
 import { GlobalTextDisplay } from "./GlobalText";
-import { Provider, useAtom, useAtomValue } from "jotai";
+import { atom, Provider, useAtomValue } from "jotai";
 import {
   addTodoAtom,
   TodoAtom,
   todosAtom,
   todosAtomLength,
+  todosIdAtom,
   useRemoveTodo,
   useToggleTodo,
 } from "./todo-atoms";
@@ -15,7 +16,7 @@ import { useUpdateAtom } from "jotai/utils";
 
 const TodoList: FC<{ id: string }> = ({ id }) => {
   return (
-    <Provider initialValues={[[todosAtom, []]]}>
+    <Provider initialValues={[[todosIdAtom, id]]}>
       <div className="flex flex-col space-y-6">
         <TodoListView />
         <TodoListLength />

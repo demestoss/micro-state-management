@@ -1,6 +1,7 @@
 import { atom, PrimitiveAtom } from "jotai";
-import { useUpdateAtom } from "jotai/utils";
+import { atomFamily, useUpdateAtom } from "jotai/utils";
 import { useCallback } from "react";
+import { atomWithLocalStorage } from "./atoms/atom-with-local-storage";
 
 type Todo = {
   title: string;
@@ -9,7 +10,20 @@ type Todo = {
 
 export type TodoAtom = PrimitiveAtom<Todo>;
 
-const todosAtom = atom<TodoAtom[]>([]);
+const todosIdAtom = atom("todos-list");
+
+const todosFamilyAtom = atomFamily((id: string) => atomWithLocalStorage<TodoAtom[]>([], id));
+
+const todosAtom = atom(
+  (get) => get(todosFamilyAtom(get(todosIdAtom))),
+  (get, set, nextValue: TodoAtom[] | ((p: TodoAtom[]) => TodoAtom[])) => {
+    const val =
+      typeof nextValue === "function"
+        ? nextValue(get(todosFamilyAtom(get(todosIdAtom))))
+        : nextValue;
+    set(todosFamilyAtom(get(todosIdAtom)), val);
+  }
+);
 
 const todosAtomLength = atom((get) => get(todosAtom).length);
 
@@ -30,4 +44,4 @@ export function useRemoveTodo(todoAtom: TodoAtom) {
   );
 }
 
-export { todosAtom, todosAtomLength, addTodoAtom };
+export { todosAtom, todosAtomLength, addTodoAtom, todosIdAtom };
