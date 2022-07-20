@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "routes": [
+    { "src": "/", "dest": "/" },
+    { "src": "/zustand", "dest": "/" },
+    { "src": "/jotai", "dest": "/" },
+    { "src": "/valtio", "dest": "/" },
+    { "src": "/subscribed", "dest": "/" }
+  ]
 }
