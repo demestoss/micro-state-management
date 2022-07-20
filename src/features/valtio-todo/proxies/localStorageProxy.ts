@@ -12,7 +12,6 @@ function localStorageProxy<State extends object>(initialValue: State, options: S
 
   const initial = parseValueFromStorage({ key, schema, initial: initialValue, storage });
 
-  console.log("initial", initial);
   const state = proxy(initial);
 
   subscribe(state, () => {

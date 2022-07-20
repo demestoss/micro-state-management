@@ -2,24 +2,26 @@ import React, { FC, memo } from "react";
 import { SearchTextDisplay } from "./SearchText";
 import { CoreTodoList } from "../todo-core/CoreTodoList";
 import { useEvent } from "../../hooks/use-event";
-import { addTodo, removeTodo, todosState, toggleTodo, useTodoItem } from "./todo-proxies";
+import { useTodoList, TodoListProvider, useTodoItem } from "./todo-proxies";
 import { useSnapshot } from "valtio";
-import { derive } from "valtio/utils";
 
 const ValtioTodoList: FC<{ id: string }> = ({ id }) => {
   return (
-    <CoreTodoList.Container>
-      <TodoListView />
-      <TodoListLength />
-      <CreateTodo />
-      <SearchTextDisplay />
-      <TodoListText />
-    </CoreTodoList.Container>
+    <TodoListProvider id={id}>
+      <CoreTodoList.Container>
+        <TodoListView />
+        <TodoListLength />
+        <CreateTodo />
+        <SearchTextDisplay />
+        <TodoListText />
+      </CoreTodoList.Container>
+    </TodoListProvider>
   );
 };
 
 const TodoListView = () => {
-  const { todos } = useSnapshot(todosState);
+  const state = useTodoList();
+  const { todos } = useSnapshot(state);
   const todoIds = todos.map((todo) => todo.id);
 
   return (
@@ -32,6 +34,7 @@ const TodoListView = () => {
 };
 
 const TodoItem: FC<{ id: string }> = ({ id }) => {
+  const { removeTodo, toggleTodo } = useTodoList();
   const { title, done } = useTodoItem(id);
 
   const removeEvent = useEvent(() => removeTodo(id));
@@ -43,23 +46,21 @@ const TodoItem: FC<{ id: string }> = ({ id }) => {
 const MemoedTodoItem = memo(TodoItem);
 
 const TodoListLength = () => {
-  const { todos } = useSnapshot(todosState);
+  const state = useTodoList();
+  const { todos } = useSnapshot(state);
 
   return <CoreTodoList.Length length={todos.length} />;
 };
 
-// Conditional proxies creating 🎉
-const derived = derive({
-  showText: (get) => get(todosState).todos.length > 2,
-});
-
 const TodoListText = () => {
-  const { showText } = useSnapshot(derived);
+  const state = useTodoList();
+  const { showText } = useSnapshot(state);
 
   return <div>{showText && <span>Length is greater than 2</span>}</div>;
 };
 
 const CreateTodo = () => {
+  const { addTodo } = useTodoList();
   return <CoreTodoList.CreateTodo add={addTodo} />;
 };
 
