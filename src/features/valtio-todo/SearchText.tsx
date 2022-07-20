@@ -12,7 +12,7 @@ const reset = () => {
 };
 
 const SearchTextInput = () => {
-  const state = useSnapshot(textState);
+  const state = useSnapshot(textState, { sync: true });
 
   return <SearchInput value={state.text} onChange={setText} />;
 };
