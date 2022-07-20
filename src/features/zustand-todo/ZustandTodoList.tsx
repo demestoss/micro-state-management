@@ -12,8 +12,6 @@ import {
 import { SharedTextDisplay } from "./SharedText";
 import { CoreTodoList } from "../todo-core/CoreTodoList";
 import { useEvent } from "../../hooks/use-event";
-import { useSnapshot } from "valtio";
-import { todosState } from "../valtio-todo/todo-proxies";
 
 const ZustandTodoList: FC<{ id: string }> = ({ id }) => {
   return (
