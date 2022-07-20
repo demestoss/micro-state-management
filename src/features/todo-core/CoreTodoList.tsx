@@ -3,14 +3,23 @@ import { useRenderCount } from "../../hooks/use-render-count";
 import { useEvent } from "../../hooks/use-event";
 import { clsx } from "clsx";
 import { Input } from "../../components/Input";
-import { Button } from "../../components/Button";
+import { MemoedButton } from "../../components/Button";
 
-const TodoListContainer: FC<PropsWithChildren<{}>> = ({ children }) => {
-  return <div className="flex flex-col space-y-6">{children}</div>;
+namespace CoreTodoList {
+  export interface StaticComponents {
+    Container: FC<PropsWithChildren>;
+    Item: FC<TodoItem.Props>;
+    CreateTodo: FC<CreateTodo.Props>;
+    Length: FC<{ length: number }>;
+  }
+}
+
+const CoreTodoList: FC<PropsWithChildren> & CoreTodoList.StaticComponents = ({ children }) => {
+  return <div className="flex-1 space-y-4">{children}</div>;
 };
 
-const TodoListView: FC<PropsWithChildren<{}>> = ({ children }) => {
-  return <div className="flex-1 space-y-4">{children}</div>;
+const TodoListContainer: FC<PropsWithChildren> = ({ children }) => {
+  return <div className="flex flex-col space-y-6">{children}</div>;
 };
 
 namespace TodoItem {
@@ -31,9 +40,9 @@ const TodoItem: FC<TodoItem.Props> = memo(({ title, done, toggle, remove }) => {
         <div className={clsx("font-semibold", done && "line-through font-medium")}>{title}</div>
       </div>
 
-      <Button variant="inline" color="critical" onClick={remove}>
+      <MemoedButton variant="inline" color="critical" onClick={remove}>
         Delete
-      </Button>
+      </MemoedButton>
     </div>
   );
 });
@@ -44,13 +53,13 @@ const TodoListLength: FC<{ length: number }> = ({ length }) => {
   return <div>Length is: {length}</div>;
 };
 
-namespace NewTodo {
+namespace CreateTodo {
   export interface Props {
     add: (item: { title: string }) => void;
   }
 }
 
-const NewTodo: FC<NewTodo.Props> = ({ add }) => {
+const CreateTodo: FC<CreateTodo.Props> = ({ add }) => {
   const [text, setText] = useState("");
 
   const onClick = useEvent(() => {
@@ -68,11 +77,16 @@ const NewTodo: FC<NewTodo.Props> = ({ add }) => {
         </div>
 
         <div className="basis-1/4">
-          <Button onClick={onClick}>Add</Button>
+          <MemoedButton onClick={onClick}>Add</MemoedButton>
         </div>
       </div>
     </div>
   );
 };
 
-export { TodoListContainer, TodoListView, TodoItem, TodoListLength, NewTodo };
+CoreTodoList.Container = TodoListContainer;
+CoreTodoList.Item = TodoItem;
+CoreTodoList.CreateTodo = CreateTodo;
+CoreTodoList.Length = TodoListLength;
+
+export { CoreTodoList };

@@ -1,7 +1,8 @@
 import React from "react";
 import { GlobalTextInput } from "../features/jotai-todo/GlobalText";
-import { TodoList } from "../features/jotai-todo/TodoList";
+import { JotaiTodoList } from "../features/jotai-todo/JotaiTodoList";
 import { atom, Provider, useAtomValue } from "jotai";
+import { TodoListGrid } from "../features/todo-core/TodoListGrid";
 
 const todoIdListAtom = atom(() => ["third", "forth"]);
 
@@ -13,11 +14,11 @@ const JotaiApp = () => {
       <div className="flex flex-col space-y-10 mx-auto">
         <GlobalTextInput />
 
-        <div className="grid grid-cols-2 gap-8">
+        <TodoListGrid>
           {todoIdList.map((id) => (
-            <TodoList key={id} id={id} />
+            <JotaiTodoList key={id} id={id} />
           ))}
-        </div>
+        </TodoListGrid>
       </div>
     </Provider>
   );

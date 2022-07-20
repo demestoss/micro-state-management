@@ -3,6 +3,8 @@ import { RESET } from "jotai/utils";
 
 type Schema = { safeParse: (s: string) => { success: boolean } };
 
+// Own implementation of atomWithStorage
+// The origin atom from jotai does not work for me :\
 function atomWithLocalStorage<T>(initialValue: T, key: string, schema?: Schema) {
   const localData = window.localStorage.getItem(key);
   let parsedData;

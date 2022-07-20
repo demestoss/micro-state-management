@@ -33,8 +33,8 @@ const todosAtom = atom(
 
 const todosLengthAtom = atom((get) => get(todosAtom).length);
 
-const addTodoAtom = atom(null, (get, set, title: string) =>
-  set(todosAtom, [...get(todosAtom), { id: uniq("todo"), title, done: false }])
+const addTodoAtom = atom(null, (get, set, item: { title: string }) =>
+  set(todosAtom, [...get(todosAtom), { id: uniq("todo"), done: false, ...item }])
 );
 
 const removeTodoAtom = atom(null, (get, set, id: string) =>
@@ -51,14 +51,4 @@ const toggleTodoAtom = atom(null, (get, set, id: string) =>
   )
 );
 
-function useToggleTodo(todoId: string) {
-  const toggle = useUpdateAtom(toggleTodoAtom);
-  return useCallback(() => toggle(todoId), [toggle, todoId]);
-}
-
-function useRemoveTodo(todoId: string) {
-  const remove = useUpdateAtom(removeTodoAtom);
-  return useCallback(() => remove(todoId), [remove, todoId]);
-}
-
-export { todosAtom, todosLengthAtom, addTodoAtom, todosIdAtom, useRemoveTodo, useToggleTodo };
+export { todosAtom, todosLengthAtom, addTodoAtom, todosIdAtom, removeTodoAtom, toggleTodoAtom };

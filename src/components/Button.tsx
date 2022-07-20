@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from "react";
+import React, { FC, memo, PropsWithChildren } from "react";
 import { clsx } from "clsx";
 
 enum ColorEnum {
@@ -69,4 +69,6 @@ const Button: FC<PropsWithChildren<Button.Props>> = ({
   );
 };
 
-export { Button };
+const MemoedButton = memo(Button);
+
+export { Button, MemoedButton };

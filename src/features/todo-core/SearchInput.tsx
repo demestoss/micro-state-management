@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Button } from "../../components/Button";
+import { MemoedButton } from "../../components/Button";
 import { Input } from "../../components/Input";
 
 const SearchInput: FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => {
@@ -19,9 +19,9 @@ const SearchInputDisplay: FC<{ value: string; reset: () => void }> = ({ value, r
     <div className="space-x-2">
       <span>{value}</span>
 
-      <Button variant="inline" color="critical" onClick={reset}>
+      <MemoedButton variant="inline" color="critical" onClick={reset}>
         Reset
-      </Button>
+      </MemoedButton>
     </div>
   );
 };
