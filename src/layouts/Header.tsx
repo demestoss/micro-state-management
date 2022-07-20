@@ -9,6 +9,8 @@ const Header: FC = () => {
 
       <ActiveLink href="/jotai">Jotai To-Do</ActiveLink>
 
+      <ActiveLink href="/valtio">Valtio To-Do</ActiveLink>
+
       <ActiveLink href="/subscribed">My Subscribed library</ActiveLink>
     </header>
   );

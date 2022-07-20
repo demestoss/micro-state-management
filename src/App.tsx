@@ -3,6 +3,7 @@ import { ZustandApp } from "./pages/zustand-app";
 import { PageContainer } from "./layouts/PageContainer";
 import { SubscriptionStore } from "./pages/subscription-store";
 import { JotaiApp } from "./pages/jotai-app";
+import { ValtioApp } from "./pages/valtio-app";
 
 const App = () => {
   return (
@@ -14,6 +15,10 @@ const App = () => {
 
         <Route path="/jotai">
           <JotaiApp />
+        </Route>
+
+        <Route path="/valtio">
+          <ValtioApp />
         </Route>
 
         <Route path="/subscribed">
