@@ -1,39 +1,44 @@
-import { FC } from "react";
-import { Link, LinkProps, useRoute } from "wouter";
+import { FC, memo, PropsWithChildren } from "react";
 import { clsx } from "clsx";
+import { Link, LinkProps } from "@tanstack/react-location";
 
 const Header: FC = () => {
   return (
     <header className="flex p-8 space-x-8 ">
-      <ActiveLink href="/zustand">Zustand To-Do</ActiveLink>
+      <ActiveLink to="/zustand">Zustand To-Do</ActiveLink>
 
-      <ActiveLink href="/jotai">Jotai To-Do</ActiveLink>
+      <ActiveLink to="/jotai">Jotai To-Do</ActiveLink>
 
-      <ActiveLink href="/valtio">Valtio To-Do</ActiveLink>
+      <ActiveLink to="/valtio">Valtio To-Do</ActiveLink>
 
-      <ActiveLink href="/subscribed">My Subscribed library</ActiveLink>
+      <ActiveLink to="/subscribed">My Subscribed library</ActiveLink>
     </header>
   );
 };
 
-const ActiveLink: FC<LinkProps> = (props) => {
-  const { href = "", children } = props;
-  const [active] = useRoute(href);
-
+const ActiveLink: FC<PropsWithChildren<LinkProps>> = (props) => {
   return (
     <Link {...props}>
-      <a
-        className={clsx(
-          "text-xl",
-          active
-            ? "text-neutral-800 font-bold"
-            : "text-neutral-500 font-semibold hover:text-neutral-600"
-        )}
-      >
-        {children}
-      </a>
+      {({ isActive: active }) => <ActiveLinkView active={active}>{props.children}</ActiveLinkView>}
     </Link>
   );
 };
+
+const ActiveLinkView: FC<PropsWithChildren<{ active: boolean }>> = memo(({ children, active }) => {
+  return (
+    <a
+      className={clsx(
+        "text-xl",
+        active
+          ? "text-neutral-800 font-bold"
+          : "text-neutral-500 font-semibold hover:text-neutral-600"
+      )}
+    >
+      {children}
+    </a>
+  );
+});
+
+ActiveLinkView.displayName = "ActiveLinkView";
 
 export { Header };
