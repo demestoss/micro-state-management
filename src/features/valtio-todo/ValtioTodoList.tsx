@@ -4,6 +4,7 @@ import { CoreTodoList } from "../todo-core/CoreTodoList";
 import { useEvent } from "../../hooks/use-event";
 import { addTodo, removeTodo, todosState, toggleTodo, useTodoItem } from "./todo-proxies";
 import { useSnapshot } from "valtio";
+import { derive } from "valtio/utils";
 
 const ValtioTodoList: FC<{ id: string }> = ({ id }) => {
   return (
@@ -12,6 +13,7 @@ const ValtioTodoList: FC<{ id: string }> = ({ id }) => {
       <TodoListLength />
       <CreateTodo />
       <SearchTextDisplay />
+      <TodoListText />
     </CoreTodoList.Container>
   );
 };
@@ -44,6 +46,17 @@ const TodoListLength = () => {
   const { todos } = useSnapshot(todosState);
 
   return <CoreTodoList.Length length={todos.length} />;
+};
+
+// Conditional proxies creating 🎉
+const derived = derive({
+  showText: (get) => get(todosState).todos.length > 2,
+});
+
+const TodoListText = () => {
+  const { showText } = useSnapshot(derived);
+
+  return <div>{showText && <span>Length is greater than 2</span>}</div>;
 };
 
 const CreateTodo = () => {

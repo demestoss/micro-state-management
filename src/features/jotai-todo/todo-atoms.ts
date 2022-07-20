@@ -22,7 +22,7 @@ const TodoListSchema = z.array(
 const todosIdAtom = atom("todos-list");
 
 const todosFamilyAtom = atomFamily((id: string) =>
-  atomWithLocalStorage<Todo[]>([], id, TodoListSchema)
+  atomWithLocalStorage<Todo[]>([], { key: id, schema: TodoListSchema })
 );
 
 const todosAtom = atom(

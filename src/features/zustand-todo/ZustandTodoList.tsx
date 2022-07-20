@@ -12,6 +12,8 @@ import {
 import { SharedTextDisplay } from "./SharedText";
 import { CoreTodoList } from "../todo-core/CoreTodoList";
 import { useEvent } from "../../hooks/use-event";
+import { useSnapshot } from "valtio";
+import { todosState } from "../valtio-todo/todo-proxies";
 
 const ZustandTodoList: FC<{ id: string }> = ({ id }) => {
   return (
@@ -21,6 +23,7 @@ const ZustandTodoList: FC<{ id: string }> = ({ id }) => {
         <TodoListLength />
         <CreateTodo />
         <SharedTextDisplay />
+        <TodoListText />
       </CoreTodoList.Container>
     </TodoProvider>
   );
@@ -67,6 +70,12 @@ const CreateTodo = () => {
   const addTodo = useTodoStore(selectAddTodo);
 
   return <CoreTodoList.CreateTodo add={addTodo} />;
+};
+
+const TodoListText = () => {
+  const showText = useTodoStore((state) => state.todos.length > 2);
+
+  return <div>{showText && <span>Length is greater than 2</span>}</div>;
 };
 
 export { ZustandTodoList };

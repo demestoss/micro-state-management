@@ -1,5 +1,7 @@
 import { proxy, useSnapshot } from "valtio";
 import { uniq } from "../../utils/uniq";
+import { localStorageProxy } from "./proxies/localStorageProxy";
+import { z } from "zod";
 
 type Todo = {
   id: string;
@@ -11,9 +13,22 @@ interface State {
   todos: Todo[];
 }
 
-const todosState = proxy<State>({
-  todos: [],
+const TodoListSchema = z.object({
+  todos: z.array(
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      done: z.boolean(),
+    })
+  ),
 });
+
+const todosState = localStorageProxy<State>(
+  {
+    todos: [],
+  },
+  { key: "todos-list", schema: TodoListSchema }
+);
 
 const addTodo = (item: { title: string }) => {
   todosState.todos.push({
