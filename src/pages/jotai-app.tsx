@@ -1,8 +1,8 @@
 import React from "react";
 import { GlobalTextInput } from "../features/jotai-todo/GlobalText";
-import { TodoList } from "../features/jotai-todo/TodoList";
-import { atom, Provider, useAtom, useAtomValue, WritableAtom } from "jotai";
-import { RESET, useResetAtom } from "jotai/utils";
+import { JotaiTodoList } from "../features/jotai-todo/JotaiTodoList";
+import { atom, Provider, useAtomValue } from "jotai";
+import { TodoListGrid } from "../features/todo-core/TodoListGrid";
 
 const todoIdListAtom = atom(() => ["third", "forth"]);
 
@@ -10,32 +10,20 @@ const JotaiApp = () => {
   const todoIdList = useAtomValue(todoIdListAtom);
 
   return (
-    <Provider scope="global">
+    <Provider scope={globalAtomScope}>
       <div className="flex flex-col space-y-10 mx-auto">
         <GlobalTextInput />
 
-        <div className="grid grid-cols-2 gap-8">
+        <TodoListGrid>
           {todoIdList.map((id) => (
-            <TodoList key={id} id={id} />
+            <JotaiTodoList key={id} id={id} />
           ))}
-        </div>
+        </TodoListGrid>
       </div>
     </Provider>
   );
 };
 
-function useGlobalAtom<T, S>(atom: WritableAtom<T, S>) {
-  return useAtom(atom, "global");
-}
+const globalAtomScope = Symbol("global");
 
-function useGlobalAtomValue<T, S>(atom: WritableAtom<T, S>) {
-  return useAtomValue(atom, "global");
-}
-
-function useGlobalResetAtom<T>(
-  atom: WritableAtom<string, string | typeof RESET | ((prev: string) => string)>
-) {
-  return useResetAtom(atom, "global");
-}
-
-export { JotaiApp, useGlobalAtom, useGlobalAtomValue, useGlobalResetAtom };
+export { JotaiApp, globalAtomScope };

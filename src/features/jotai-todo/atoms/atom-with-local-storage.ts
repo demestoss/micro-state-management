@@ -1,20 +1,19 @@
 import { atom, SetStateAction, WritableAtom } from "jotai";
 import { RESET } from "jotai/utils";
+import { parseValueFromStorage, Schema } from "../../../utils/parseValueFromStorage";
 
-type Schema = { safeParse: (s: string) => { success: boolean } };
+interface StoreOptions {
+  key: string;
+  schema?: Schema;
+  storage?: Storage;
+}
 
-function atomWithLocalStorage<T>(initialValue: T, key: string, schema?: Schema) {
-  const localData = window.localStorage.getItem(key);
-  let parsedData;
-  try {
-    parsedData = JSON.parse(localData ?? "");
-  } catch (e) {
-    parsedData = undefined;
-  }
+// Own implementation of atomWithStorage
+// The origin atom from jotai does not work for me :\
+function atomWithLocalStorage<T>(initialValue: T, options: StoreOptions) {
+  const { key, schema, storage = window.localStorage } = options;
 
-  const isValid = schema ? schema.safeParse(parsedData).success : true;
-
-  const initial: T = (isValid && parsedData) || initialValue;
+  const initial = parseValueFromStorage({ key, schema, initial: initialValue, storage });
 
   const baseAtom = atom(initial);
 
@@ -23,11 +22,11 @@ function atomWithLocalStorage<T>(initialValue: T, key: string, schema?: Schema) 
     (get, set, update: SetStateAction<T> | typeof RESET) => {
       if (update === RESET) {
         set(baseAtom, initialValue);
-        return window.localStorage.removeItem(key);
+        return storage.removeItem(key);
       }
 
       set(baseAtom, update);
-      window.localStorage.setItem(key, JSON.stringify(get(anAtom)));
+      storage.setItem(key, JSON.stringify(get(anAtom)));
     }
   );
 

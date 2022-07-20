@@ -1,14 +1,8 @@
-import React, { FC, memo, useCallback, useEffect, useRef, useState } from "react";
-import create, { StoreApi } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { persist } from "zustand/middleware";
-import createContext from "zustand/context";
-import { uniq } from "../utils/uniq";
-import { clsx } from "clsx";
-import { useRenderCount } from "../hooks/use-render-count";
-import { TodoList } from "../features/zustand-todo/TodoList";
+import React, { FC } from "react";
+import { ZustandTodoList } from "../features/zustand-todo/ZustandTodoList";
 import { SharedTextInput } from "../features/zustand-todo/SharedText";
 import { atom, useAtomValue } from "jotai";
+import { TodoListGrid } from "../features/todo-core/TodoListGrid";
 
 const todoIdListAtom = atom(() => ["first", "second"]);
 
@@ -19,11 +13,11 @@ const ZustandApp: FC = () => {
     <div className="flex flex-col space-y-10 mx-auto">
       <SharedTextInput />
 
-      <div className="grid grid-cols-2 gap-8">
+      <TodoListGrid>
         {todoIdList.map((id) => (
-          <TodoList key={id} id={id} />
+          <ZustandTodoList key={id} id={id} />
         ))}
-      </div>
+      </TodoListGrid>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { immer } from "zustand/middleware/immer";
 import createContext from "zustand/context";
 import { uniq } from "../../utils/uniq";
 
-interface Todo {
+export interface Todo {
   id: string;
   title: string;
   done: boolean;
@@ -13,7 +13,7 @@ interface Todo {
 
 interface StoreState {
   todos: Todo[];
-  addTodo: (title: string) => void;
+  addTodo: (item: { title: string }) => void;
   removeTodo: (id: string) => void;
   toggleTodo: (id: string) => void;
 }
@@ -23,7 +23,7 @@ const createTodoStore = (id: string) =>
     persist(
       immer((set) => ({
         todos: [],
-        addTodo: (title) =>
+        addTodo: ({ title }) =>
           set((state) => {
             state.todos.push({ title, done: false, id: uniq() });
           }),

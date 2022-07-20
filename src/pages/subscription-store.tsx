@@ -1,3 +1,4 @@
+import { Button } from "../components/Button";
 import { createStoreContext } from "../utils/subscribed";
 
 interface Store {
@@ -17,18 +18,12 @@ const Component1 = () => {
       <div>{count}</div>
 
       <div className="flex space-x-4">
-        <button
-          className="bg-emerald-400 rounded-md p-2 px-5 text-white hover:bg-emerald-500"
-          onClick={increment}
-        >
+        <Button variant="solid" color="success" onClick={increment}>
           +1
-        </button>
-        <button
-          className="border-2 border-red-400 text-red-400 rounded-md p-2 px-3 hover:border-red-500 hover:text-red-500"
-          onClick={reset}
-        >
+        </Button>
+        <Button variant="outline" color="critical" onClick={reset}>
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   );
