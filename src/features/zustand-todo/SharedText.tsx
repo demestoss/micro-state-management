@@ -21,7 +21,11 @@ const SharedTextInput = () => {
   const text = useSharedText(selectText);
   const setText = useSharedText(selectSetText);
 
-  return <SearchInput value={text} onChange={setText} />;
+  return (
+    <SearchInput value={text} onChange={setText}>
+      Zustand app
+    </SearchInput>
+  );
 };
 
 const SharedTextDisplay = () => {

@@ -21,4 +21,4 @@ const ValtioApp = () => {
   );
 };
 
-export { ValtioApp };
+export default ValtioApp;

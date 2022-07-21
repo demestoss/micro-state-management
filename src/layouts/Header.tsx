@@ -5,6 +5,8 @@ import { Link, LinkProps } from "@tanstack/react-location";
 const Header: FC = () => {
   return (
     <header className="flex p-8 space-x-8 ">
+      <ActiveLink to="/">Home</ActiveLink>
+
       <ActiveLink to="/zustand">Zustand To-Do</ActiveLink>
 
       <ActiveLink to="/jotai">Jotai To-Do</ActiveLink>
@@ -26,7 +28,7 @@ const ActiveLink: FC<PropsWithChildren<LinkProps>> = (props) => {
 
 const ActiveLinkView: FC<PropsWithChildren<{ active: boolean }>> = memo(({ children, active }) => {
   return (
-    <a
+    <span
       className={clsx(
         "text-xl",
         active
@@ -35,7 +37,7 @@ const ActiveLinkView: FC<PropsWithChildren<{ active: boolean }>> = memo(({ child
       )}
     >
       {children}
-    </a>
+    </span>
   );
 });
 

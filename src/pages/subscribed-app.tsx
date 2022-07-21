@@ -1,12 +1,11 @@
-import React, { FC } from "react";
-import { ZustandTodoList } from "../features/zustand-todo/ZustandTodoList";
-import { SharedTextInput } from "../features/zustand-todo/SharedText";
 import { atom, useAtomValue } from "jotai";
+import { SubscribedTodoList } from "../features/subscribed-todo/SubscribedTodoList";
 import { TodoListGrid } from "../features/todo-core/TodoListGrid";
+import { SharedTextInput } from "../features/subscribed-todo/SharedText";
 
-const todoIdListAtom = atom(() => ["first", "second"]);
+const todoIdListAtom = atom(() => ["subscribed-1", "subscribed-2"]);
 
-const ZustandApp: FC = () => {
+const SubscribedApp = () => {
   const todoIdList = useAtomValue(todoIdListAtom);
 
   return (
@@ -15,11 +14,11 @@ const ZustandApp: FC = () => {
 
       <TodoListGrid>
         {todoIdList.map((id) => (
-          <ZustandTodoList key={id} id={id} />
+          <SubscribedTodoList key={id} id={id} />
         ))}
       </TodoListGrid>
     </div>
   );
 };
 
-export default ZustandApp;
+export default SubscribedApp;

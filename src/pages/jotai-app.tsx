@@ -26,4 +26,6 @@ const JotaiApp = () => {
 
 const globalAtomScope = Symbol("global");
 
-export { JotaiApp, globalAtomScope };
+export { globalAtomScope };
+
+export default JotaiApp;

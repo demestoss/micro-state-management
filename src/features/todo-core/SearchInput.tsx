@@ -1,11 +1,15 @@
-import { FC } from "react";
+import { FC, PropsWithChildren } from "react";
 import { MemoedButton } from "../../components/Button";
 import { Input } from "../../components/Input";
 
-const SearchInput: FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => {
+const SearchInput: FC<PropsWithChildren<{ value: string; onChange: (v: string) => void }>> = ({
+  value,
+  onChange,
+  children,
+}) => {
   return (
     <div className="flex flex-col space-y-4">
-      <div className="text-xl text-center">Shared search input</div>
+      <div className="text-xl text-center">{children} - shared text</div>
 
       <Input value={value} onChange={(e) => onChange(e.target.value)} />
     </div>

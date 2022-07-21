@@ -1,11 +1,10 @@
 import React, {
   createContext,
   FC,
-  ReactNode,
+  PropsWithChildren,
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -54,23 +53,47 @@ function useStore<T, S>(store: Store<T>, selector: (state: T) => S) {
   return state;
 }
 
-// Creating global store hook (like Zustand)
+type Mutator<T, U> = (state: T, update: U) => T;
+
+function useMutation<T, U = undefined>(store: Store<T>, mutator: Mutator<T, U>) {
+  const mutatorRef = useRef<Mutator<T, U>>(mutator);
+
+  useEffect(() => {
+    mutatorRef.current = mutator;
+  }, [mutator]);
+
+  return useCallback(
+    (update: U) => {
+      store.set((prev) => mutatorRef.current(prev, update));
+    },
+    [store]
+  ) as undefined extends U ? (update?: U) => void : (update: U) => void;
+}
+
 function create<T>(initialState: T) {
   const store = createStore(initialState);
 
-  return <S extends unknown = T>(selector: (state: T) => S = (state) => state as unknown as S) =>
-    useStore(store, selector);
+  function useStoreSelector<S = T>(selector: (state: T) => S = (s: T) => s as unknown as S) {
+    return useStore(store, selector);
+  }
+
+  function useStoreMutation<U = unknown>(mutator: Mutator<T, U>) {
+    return useMutation(store, mutator);
+  }
+
+  return [useStoreSelector, useStoreMutation] as const;
 }
 
-function createStoreContext<T>(defaultValue?: T) {
-  const StoreContext = createContext<Store<T> | undefined>(
-    defaultValue && createStore(defaultValue)
-  );
+function createStoreContext<T>() {
+  const StoreContext = createContext<Store<T> | undefined>(undefined);
 
-  const Provider: FC<{ initialState: T; children: ReactNode }> = ({ initialState, children }) => {
+  const Provider: FC<PropsWithChildren<{ createStore: () => Store<T> }>> = ({
+    createStore,
+    children,
+  }) => {
     const valueRef = useRef<Store<T>>();
     if (!valueRef.current) {
-      valueRef.current = createStore(initialState);
+      valueRef.current = createStore();
     }
 
     return <StoreContext.Provider value={valueRef.current}>{children}</StoreContext.Provider>;
@@ -89,21 +112,12 @@ function createStoreContext<T>(defaultValue?: T) {
     return useStore(store, selector);
   }
 
-  function useStoreMutation<S = T>(mutator: NextState<T>) {
+  function useStoreMutation<U = unknown>(mutator: Mutator<T, U>) {
     const store = useStoreContext();
-
-    const mutatorRef = useRef<NextState<T>>(mutator);
-
-    useEffect(() => {
-      mutatorRef.current = mutator;
-    }, [mutator]);
-
-    return useCallback(() => {
-      store.set(mutatorRef.current);
-    }, [store]);
+    return useMutation(store, mutator);
   }
 
   return [Provider, useStoreSelector, useStoreMutation] as const;
 }
 
-export { createStoreContext, createStore, useStore, create };
+export { createStoreContext, createStore, create };

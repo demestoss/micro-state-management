@@ -8,7 +8,11 @@ const textAtom = atomWithReset("");
 const GlobalTextInput = () => {
   const [text, setText] = useAtom(textAtom, globalAtomScope);
 
-  return <SearchInput value={text} onChange={setText} />;
+  return (
+    <SearchInput value={text} onChange={setText}>
+      Jotai app
+    </SearchInput>
+  );
 };
 
 const GlobalTextDisplay = () => {
