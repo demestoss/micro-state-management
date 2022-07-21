@@ -9,18 +9,10 @@ implemented by me and could solve the same problem
 
 ## Each application functions:
 
-<li>
-    Render List of <b>Todo Lists</b> with functionality to add, remove and mark todo as done;
-</li>
-<li>
-    Persist each list to <b>localStorage</b> separately;
-</li>
-<li>
-    Global text input, that should render text inside each todo list with reset button;
-</li>
-<li>
-    Use the same <b>TodoListCore</b> components to render application.
-</li>
+- Render List of <b>Todo Lists</b> with functionality to add, remove and mark todo as done;
+- Persist each list to <b>localStorage</b> separately;
+- Global text input, that should render text inside each todo list with reset button;
+- Use the same <b>TodoListCore</b> components to render application.
 
 ## Micro state management book
 
